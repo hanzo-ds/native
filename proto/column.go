@@ -136,6 +136,19 @@ func (c ColumnType) Conflicts(b ColumnType) bool {
 		return false
 	}
 
+	if cBase == bBase && cBase == ColumnTypeAggregateFunction {
+		// Compare function names.
+		aName, aType := aggregateFuncNameAndType(string(c))
+		bName, bType := aggregateFuncNameAndType(string(b))
+		if aName == bName {
+			return false
+		}
+		if aType == bType {
+			return false
+		}
+		return true
+	}
+
 	if c.normalizeCommas() == b.normalizeCommas() {
 		return false
 	}
@@ -255,6 +268,8 @@ const (
 	ColumnTypeNothing        ColumnType = "Nothing"
 	ColumnTypeJSON           ColumnType = "JSON"
 	ColumnTypeQBit           ColumnType = "QBit"
+
+	ColumnTypeAggregateFunction ColumnType = "AggregateFunction"
 )
 
 // colWrap wraps Column with type t.
@@ -329,4 +344,33 @@ func (s *ColInfoInput) DecodeResult(r *Reader, version int, b Block) error {
 		})
 	}
 	return nil
+}
+
+// aggregateFuncNameAndType extracts the aggregate function name and argument
+// type from an AggregateFunction(func, type) column type string.
+func aggregateFuncNameAndType(columnType string) (string, string) {
+	const sep = ", "
+	subType := columnSubType(columnType)
+	if subType == "" {
+		return "", ""
+	}
+	idx := strings.LastIndex(subType, sep)
+	if idx == -1 {
+		return "", ""
+	}
+	funcName := subType[:idx]
+	funcType := subType[idx+len(sep):]
+	if idx := strings.IndexByte(funcName, '('); idx >= 0 {
+		funcName = funcName[:idx]
+	}
+	return funcName, funcType
+}
+
+// columnSubType returns the inner "func, type" of an AggregateFunction(...) type.
+func columnSubType(s string) string {
+	const colType = string(ColumnTypeAggregateFunction)
+	if strings.HasPrefix(s, colType) && strings.HasSuffix(s, ")") {
+		return s[len(colType)+1 : len(s)-1]
+	}
+	return ""
 }

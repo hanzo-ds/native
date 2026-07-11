@@ -76,6 +76,13 @@ func (b *Buffer) PutUVarInt(x uint64) {
 	b.Buf = append(b.Buf, buf[:n]...)
 }
 
+// PutVarInt encodes signed integer as varint.
+func (b *Buffer) PutVarInt(x int64) {
+	buf := [binary.MaxVarintLen64]byte{}
+	n := binary.PutVarint(buf[:], x)
+	b.Buf = append(b.Buf, buf[:n]...)
+}
+
 // PutInt encodes integer as uvarint.
 func (b *Buffer) PutInt(x int) {
 	b.PutUVarInt(uint64(x))
