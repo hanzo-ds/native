@@ -218,7 +218,7 @@ func (b Block) WriteBlock(w *Writer, version int, input []InputColumn) error {
 // This constrains can prevent accidental OOM and allow early detection
 // of erroneous column or row count.
 //
-// Just empirical values, there are no such limits in spec or in ClickHouse,
+// Just empirical values, there are no such limits in spec or in Datastore,
 // so is subject to change if false-positives occur.
 const (
 	maxColumnsInBlock = 1_000_000

@@ -4,7 +4,7 @@ import "time"
 
 // Date represents Date value.
 //
-// https://clickhouse.com/docs/en/sql-reference/data-types/date/
+// https://docs.hanzo.ai/datastore
 type Date uint16
 
 // DateLayout is default time format for Date.

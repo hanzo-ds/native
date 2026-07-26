@@ -7,7 +7,7 @@ import (
 	"math"
 )
 
-// Buffer implements ClickHouse binary protocol encoding.
+// Buffer implements Datastore binary protocol encoding.
 type Buffer struct {
 	Buf []byte
 }

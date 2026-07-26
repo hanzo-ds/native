@@ -10,7 +10,7 @@ import (
 	"github.com/go-faster/errors"
 )
 
-var _ = binary.LittleEndian // clickHouse uses LittleEndian
+var _ = binary.LittleEndian // the server uses LittleEndian
 
 // DecodeColumn decodes UInt256 rows from *Reader.
 func (c *ColUInt256) DecodeColumn(r *Reader, rows int) error {

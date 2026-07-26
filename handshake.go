@@ -13,8 +13,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/hanzo-ds/native/tracing"
 	"github.com/hanzo-ds/native/proto"
+	"github.com/hanzo-ds/native/tracing"
 )
 
 func (c *Client) encodeAddendum() {

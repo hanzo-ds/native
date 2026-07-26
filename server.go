@@ -15,7 +15,7 @@ import (
 	"github.com/hanzo-ds/native/proto"
 )
 
-// Server is basic ClickHouse server.
+// Server is basic Datastore server.
 type Server struct {
 	lg    *zap.Logger
 	tz    *time.Location
@@ -31,7 +31,7 @@ type ServerOptions struct {
 	OnError  func(err error)
 }
 
-// NewServer returns new ClickHouse Server.
+// NewServer returns new Datastore Server.
 func NewServer(opt ServerOptions) *Server {
 	if opt.Logger == nil {
 		opt.Logger = zap.NewNop()

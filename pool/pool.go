@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/puddle/v2"
 )
 
-// Pool of connections to ClickHouse.
+// Pool of connections to Datastore.
 type Pool struct {
 	pool    *puddle.Pool[*connResource]
 	options Options
@@ -53,13 +53,13 @@ func (o *Options) setDefaults() {
 	}
 }
 
-// Dial returns a pool of connections to ClickHouse.
-// Checks if ClickHouse is available, fails if not.
+// Dial returns a pool of connections to Datastore.
+// Checks if Datastore is available, fails if not.
 func Dial(ctx context.Context, opt Options) (*Pool, error) {
 	return newPool(ctx, opt, true)
 }
 
-// New returns a pool of connections to ClickHouse.
+// New returns a pool of connections to Datastore.
 func New(ctx context.Context, opt Options) (*Pool, error) {
 	return newPool(ctx, opt, false)
 }

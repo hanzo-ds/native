@@ -42,7 +42,7 @@ type Level uint32
 
 // Constants for compression encoding.
 //
-// See https://go-faster.org/docs/clickhouse/compression for reference.
+// See the server's native block compression format for reference.
 const (
 	checksumSize       = 16
 	compressHeaderSize = 1 + 4 + 4

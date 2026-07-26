@@ -9,7 +9,7 @@ import (
 // ColFixedStr represents FixedString(Size) column. Size is required.
 //
 // Can be used to store SHA256, MD5 or similar fixed size binary values.
-// See https://clickhouse.com/docs/en/sql-reference/data-types/fixedstring/.
+// See https://docs.hanzo.ai/datastore
 type ColFixedStr struct {
 	Buf  []byte
 	Size int // N

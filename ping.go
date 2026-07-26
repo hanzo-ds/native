@@ -7,8 +7,8 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/hanzo-ds/native/tracing"
 	"github.com/hanzo-ds/native/proto"
+	"github.com/hanzo-ds/native/tracing"
 )
 
 // Ping server.

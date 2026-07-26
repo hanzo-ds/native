@@ -4,7 +4,7 @@ import "time"
 
 // Date32 represents Date32 value.
 //
-// https://clickhouse.com/docs/en/sql-reference/data-types/date32/
+// https://docs.hanzo.ai/datastore
 type Date32 int32
 
 // Unix returns unix timestamp of Date32.

@@ -98,13 +98,13 @@ func (c ClientInfo) EncodeAware(b *Buffer, version int) {
 				v := c.Span.TraceID()
 				start := len(b.Buf)
 				b.Buf = append(b.Buf, v[:]...)
-				bswap.Swap64(b.Buf[start:]) // https://github.com/ClickHouse/ClickHouse/issues/34369
+				bswap.Swap64(b.Buf[start:])
 			}
 			{
 				v := c.Span.SpanID()
 				start := len(b.Buf)
 				b.Buf = append(b.Buf, v[:]...)
-				bswap.Swap64(b.Buf[start:]) // https://github.com/ClickHouse/ClickHouse/issues/34369
+				bswap.Swap64(b.Buf[start:])
 			}
 			b.PutString(c.Span.TraceState().String())
 			b.PutByte(byte(c.Span.TraceFlags()))
@@ -259,7 +259,7 @@ func (c *ClientInfo) DecodeAware(r *Reader, version int) error {
 				if err != nil {
 					return errors.Wrap(err, "trace id")
 				}
-				bswap.Swap64(v) // https://github.com/ClickHouse/ClickHouse/issues/34369
+				bswap.Swap64(v)
 				copy(cfg.TraceID[:], v)
 			}
 			{
@@ -267,7 +267,7 @@ func (c *ClientInfo) DecodeAware(r *Reader, version int) error {
 				if err != nil {
 					return errors.Wrap(err, "span id")
 				}
-				bswap.Swap64(v) // https://github.com/ClickHouse/ClickHouse/issues/34369
+				bswap.Swap64(v)
 				copy(cfg.SpanID[:], v)
 			}
 			{
