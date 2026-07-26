@@ -120,6 +120,6 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/ClickHouse/ch-go
+        - github.com/hanzo-ds/native
   exclusions:
     generated: strict

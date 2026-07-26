@@ -1,2 +1,2 @@
-// Package ch implements ClickHouse client.
+// Package ch implements Datastore client.
 package native

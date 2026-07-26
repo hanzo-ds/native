@@ -19,8 +19,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/hanzo-ds/native/compress"
-	"github.com/hanzo-ds/native/tracing"
 	"github.com/hanzo-ds/native/proto"
+	"github.com/hanzo-ds/native/tracing"
 )
 
 // cancelQuery cancels current query.
@@ -111,7 +111,7 @@ func (c *Client) sendQuery(ctx context.Context, q Query) error {
 	// Encoding external data if provided.
 	if len(q.ExternalData) > 0 {
 		if q.ExternalTable == "" {
-			// Resembling behavior of clickhouse-client.
+			// Resembling behavior of the reference command line client.
 			q.ExternalTable = "_data"
 		}
 		if err := c.encodeBlock(ctx, q.ExternalTable, q.ExternalData); err != nil {
@@ -126,7 +126,7 @@ func (c *Client) sendQuery(ctx context.Context, q Query) error {
 	return nil
 }
 
-// Query to ClickHouse.
+// Query to Datastore.
 type Query struct {
 	// Body of query, like "SELECT 1".
 	Body string
@@ -181,7 +181,7 @@ type Query struct {
 
 	// Secret is optional inter-server per-cluster secret for Distributed queries.
 	//
-	// See https://clickhouse.com/docs/en/engines/table-engines/special/distributed/#distributed-clusters
+	// See https://docs.hanzo.ai/datastore
 	Secret string
 
 	// InitialUser is optional initial user for Distributed queries.
@@ -189,7 +189,7 @@ type Query struct {
 
 	// ExternalData is optional data for server to load.
 	//
-	// https://clickhouse.com/docs/en/engines/table-engines/special/external-data/
+	// https://docs.hanzo.ai/datastore
 	ExternalData []proto.InputColumn
 	// ExternalTable name. Defaults to _data.
 	ExternalTable string
@@ -275,7 +275,7 @@ func (c *Client) encodeBlock(ctx context.Context, tableName string, input []prot
 		proto.ClientCodeData.Encode(buf)
 		clientData := proto.ClientData{
 			// External data table name.
-			// https://clickhouse.com/docs/en/engines/table-engines/special/external-data/
+			// https://docs.hanzo.ai/datastore
 			TableName: tableName,
 		}
 		clientData.EncodeAware(buf, c.protocolVersion)
@@ -379,7 +379,7 @@ func (c *Client) sendInput(ctx context.Context, info proto.ColInfoInput, q Query
 			return errors.Wrap(err, "input")
 		}
 	}
-	// Streaming input to ClickHouse server.
+	// Streaming input to Datastore server.
 	//
 	// NB: atomicity is guaranteed only within single block.
 	for {
@@ -415,7 +415,7 @@ func (c *Client) sendInput(ctx context.Context, info proto.ColInfoInput, q Query
 
 				break
 			}
-			// ClickHouse server persists blocks after receive.
+			// Datastore server persists blocks after receive.
 			return errors.Wrap(err, "next input (server already persisted previous blocks)")
 		}
 	}
@@ -589,7 +589,7 @@ func (c *Client) handlePacket(ctx context.Context, p proto.ServerCode, q Query) 
 	}
 }
 
-// Do performs Query on ClickHouse server.
+// Do performs Query on Datastore server.
 func (c *Client) Do(ctx context.Context, q Query) (err error) {
 	if c.IsClosed() {
 		return ErrClosed
@@ -630,6 +630,8 @@ func (c *Client) Do(ctx context.Context, q Query) (err error) {
 		newCtx, span := c.tracer.Start(ctx, "Do",
 			trace.WithSpanKind(trace.SpanKindClient),
 			trace.WithAttributes(
+				// db.system is an OpenTelemetry enum; "clickhouse" is its registered value
+				// for this DBMS. Emitting anything else would be non-conformant.
 				semconv.DBSystemKey.String("clickhouse"),
 				semconv.DBStatementKey.String(q.Body),
 				semconv.DBUserKey.String(c.info.User),

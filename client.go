@@ -21,11 +21,11 @@ import (
 
 	"github.com/hanzo-ds/native/compress"
 	pkgVersion "github.com/hanzo-ds/native/internal/version"
-	"github.com/hanzo-ds/native/tracing"
 	"github.com/hanzo-ds/native/proto"
+	"github.com/hanzo-ds/native/tracing"
 )
 
-// Client implements ClickHouse binary protocol client on top of
+// Client implements Datastore binary protocol client on top of
 // single TCP connection.
 type Client struct {
 	lg       *zap.Logger
@@ -380,7 +380,7 @@ type Options struct {
 	TLS         *tls.Config   // no TLS is used by default
 
 	ProtocolVersion  int           // force protocol version, optional
-	HandshakeTimeout time.Duration // longer lasting handshake is a case for ClickHouse cloud idle instances, defaults to 5m
+	HandshakeTimeout time.Duration // longer lasting handshake is a case for Datastore cloud idle instances, defaults to 5m
 
 	// Additional OpenTelemetry instrumentation that will capture query body
 	// and other parameters.
@@ -464,13 +464,13 @@ type clientVersion struct {
 	Patch int
 }
 
-// Connect performs handshake with ClickHouse server and initializes
+// Connect performs handshake with Datastore server and initializes
 // application level connection.
 func Connect(ctx context.Context, conn net.Conn, opt Options) (*Client, error) {
 	return ConnectWithBuffer(ctx, conn, opt, new(proto.Buffer))
 }
 
-// ConnectWithBuffer performs handshake with ClickHouse server and initializes
+// ConnectWithBuffer performs handshake with Datastore server and initializes
 // application level connection using the provided buffer.
 func ConnectWithBuffer(ctx context.Context, conn net.Conn, opt Options, buf *proto.Buffer) (*Client, error) {
 	opt.setDefaults()
@@ -572,13 +572,13 @@ type Dialer interface {
 	DialContext(ctx context.Context, network, address string) (net.Conn, error)
 }
 
-// Dial dials requested address and establishes TCP connection to ClickHouse
+// Dial dials requested address and establishes TCP connection to Datastore
 // server, performing handshake.
 func Dial(ctx context.Context, opt Options) (c *Client, err error) {
 	return DialWithBuffer(ctx, opt, new(proto.Buffer))
 }
 
-// DialWithBuffer dials requested address and establishes TCP connection to ClickHouse
+// DialWithBuffer dials requested address and establishes TCP connection to Datastore
 // server, performing handshake using the provided buffer.
 func DialWithBuffer(ctx context.Context, opt Options, buf *proto.Buffer) (c *Client, err error) {
 	opt.setDefaults()

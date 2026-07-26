@@ -29,7 +29,7 @@ const (
 // Constants for low cardinality metadata value that is represented as int64
 // consisted of bitflags and key type.
 //
-// https://github.com/ClickHouse/clickhouse-cpp/blob/b10d71eed0532405dfb4dd03aabce869ba68f581/clickhouse/columns/lowcardinality.cpp
+// Mirrors the reference C++ client's lowcardinality column implementation.
 //
 // NB: shared dictionaries and on-the-fly dictionary update is not supported,
 // because it is not currently used in client protocol.

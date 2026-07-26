@@ -44,7 +44,7 @@ const (
 
 // DateTime64 represents DateTime64 type.
 //
-// See https://clickhouse.com/docs/en/sql-reference/data-types/datetime64/.
+// See https://docs.hanzo.ai/datastore
 type DateTime64 int64
 
 // ToDateTime64 converts time.Time to DateTime64.

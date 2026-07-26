@@ -6,7 +6,7 @@ import (
 	"github.com/go-faster/errors"
 )
 
-var _ = binary.LittleEndian // ClickHouse uses LittleEndian
+var _ = binary.LittleEndian // Datastore uses LittleEndian
 
 // DecodeColumn decodes BFloat16 rows from the given reader.
 // BFloat16 is stored as 16-bit (2 bytes) little-endian uint16 on the wire.

@@ -12,7 +12,7 @@ type Nothing struct{}
 // ColNothing represents column of null values.
 // Value is row count.
 //
-// https://clickhouse.com/docs/ru/sql-reference/data-types/special-data-types/nothing
+// https://docs.hanzo.ai/datastore
 type ColNothing int
 
 func (c *ColNothing) Append(_ Nothing) {

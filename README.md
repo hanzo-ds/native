@@ -1,18 +1,17 @@
-# ch [![](https://img.shields.io/badge/go-pkg-00ADD8)](https://pkg.go.dev/github.com/ClickHouse/ch-go#section-documentation)
-Low level TCP [ClickHouse](https://clickhouse.com/) client and protocol implementation in Go. Designed for very fast data block streaming with low network, cpu and memory overhead.
+# ch [![](https://img.shields.io/badge/go-pkg-00ADD8)](https://pkg.go.dev/github.com/Datastore/native#section-documentation)
+Low level TCP [Datastore](https://docs.hanzo.ai/datastore) client and protocol implementation in Go. Designed for very fast data block streaming with low network, cpu and memory overhead.
 
 NB: **No pooling, reconnects** and **not** goroutine-safe by default, only single connection.
-Use [clickhouse-go](https://github.com/ClickHouse/clickhouse-go) for high-level `database/sql`-compatible client,
-pooling for ch-go is available as [chpool](https://pkg.go.dev/github.com/ClickHouse/ch-go/chpool) package.
+Use [datastore-go](https://github.com/Datastore/datastore-go) for high-level `database/sql`-compatible client,
+pooling for native is available as [chpool](https://pkg.go.dev/github.com/Datastore/native/chpool) package.
 
-* [Feedback](https://github.com/ClickHouse/ch-go/discussions/6)
+* [Feedback](https://github.com/Datastore/native/discussions/6)
 * [Benchmarks](https://github.com/go-faster/ch-bench#benchmarks)
-* [Protocol reference](https://go-faster.org/docs/clickhouse)
 
-*[ClickHouse](https://clickhouse.com/) is an open-source, high performance columnar OLAP database management system for real-time analytics using SQL.*
+*[Datastore](https://docs.hanzo.ai/datastore) is an open-source, high performance columnar OLAP database management system for real-time analytics using SQL.*
 
 ```console
-go get github.com/ClickHouse/ch-go@latest
+go get github.com/Datastore/native@latest
 ```
 
 ## Example
@@ -23,8 +22,8 @@ import (
   "context"
   "fmt"
 
-  "github.com/ClickHouse/ch-go"
-  "github.com/ClickHouse/ch-go/proto"
+  "github.com/Datastore/native"
+  "github.com/Datastore/native/proto"
 )
 
 func main() {
@@ -61,7 +60,7 @@ func main() {
 
 ### Results
 
-To stream query results, set `Result` and `OnResult` fields of [Query](https://pkg.go.dev/github.com/ClickHouse/ch-go#Query).
+To stream query results, set `Result` and `OnResult` fields of [Query](https://pkg.go.dev/github.com/Datastore/native#Query).
 The `OnResult` will be called after `Result` is filled with received data block.
 
 The `OnResult` is optional, but query will fail if more than single block is received, so it is ok to solely set the `Result`
@@ -154,14 +153,14 @@ if err := conn.Do(ctx, ch.Query{
 
 ### Stream data
 ```go
-// Stream data to ClickHouse server in multiple data blocks.
+// Stream data to Datastore server in multiple data blocks.
 var blocks int
 if err := conn.Do(ctx, ch.Query{
 	Body:  input.Into("test_table_insert"), // helper that generates INSERT INTO query with all columns
 	Input: input,
 
 	// OnInput is called to prepare Input data before encoding and sending
-	// to ClickHouse server.
+	// to Datastore server.
 	OnInput: func(ctx context.Context) error {
 		// On OnInput call, you should fill the input data.
 		//
@@ -193,7 +192,7 @@ if err := conn.Do(ctx, ch.Query{
             serviceName.Append("service")
 		}
 
-		// Data will be encoded and sent to ClickHouse server after returning nil.
+		// Data will be encoded and sent to Datastore server after returning nil.
 		// The Do method will return error if any.
 		blocks++
 		return nil
@@ -205,7 +204,7 @@ if err := conn.Do(ctx, ch.Query{
 
 ### Writing dumps in Native format
 
-You can use `ch-go` to write ClickHouse dumps in [Native][native] format:
+You can use `native` to write Datastore dumps in [Native][native] format:
 
 > The most efficient format. Data is written and read by blocks in binary format. For each block, the number of rows,
 > number of columns, column names and types, and parts of columns in this block are recorded one after another.
@@ -213,7 +212,7 @@ You can use `ch-go` to write ClickHouse dumps in [Native][native] format:
 > This is the format used in the native interface for interaction between servers,
 > for using the command-line client, and for C++ clients.
 
-[native]: https://clickhouse.com/docs/en/interfaces/formats/#native
+[native]: https://docs.hanzo.ai/datastore
 
 See [./internal/cmd/ch-native-dump](./internal/cmd/ch-native-dump/main.go) for more sophisticated example.
 
@@ -260,25 +259,25 @@ colV.Reset()
 * OpenTelemetry support
 * No reflection or `interface{}`
 * Generics (go1.18) for `Array[T]`, `LowCardinaliy[T]`, `Map[K, V]`, `Nullable[T]`
-* [Reading or writing](#dumps) ClickHouse dumps in `Native` format
+* [Reading or writing](#dumps) Datastore dumps in `Native` format
 * **Column**-oriented design that operates directly with **blocks** of data
-  * [Dramatically more efficient](https://github.com/ClickHouse/ch-bench)
+  * [Dramatically more efficient](https://github.com/Datastore/ch-bench)
   * Up to 100x faster than row-first design around `sql`
   * Up to 700x faster than HTTP API
   * Low memory overhead (data blocks are slices, i.e. continuous memory)
   * Highly efficient input and output block streaming
-  * As close to ClickHouse as possible
+  * As close to Datastore as possible
 * Structured query execution telemetry streaming
   * Query progress
   * Profiles
   * Logs
-  * [Profile events](https://github.com/ClickHouse/ClickHouse/issues/26177)
+  * [Profile events](https://github.com/Datastore/Datastore/issues/26177)
 * LZ4, ZSTD or *None* (just checksums for integrity check) compression
-* [External data](https://clickhouse.com/docs/en/engines/table-engines/special/external-data/) support
+* [External data](https://docs.hanzo.ai/datastore) support
 * Rigorously tested
   * Windows, Mac, Linux (also x86)
   * Unit tests for encoding and decoding
-    * ClickHouse **Server** in **Go** for faster tests
+    * Datastore **Server** in **Go** for faster tests
     * Golden files for all packets, columns
     * Both server and client structures
     * Ensuring that partial read leads to failure
@@ -320,7 +319,7 @@ input := []proto.InputColumn{
 
 ## Generics
 
-Most columns implement [proto.ColumnOf\[T\]](https://pkg.go.dev/github.com/ClickHouse/ch-go/proto#ColumnOf) generic constraint:
+Most columns implement [proto.ColumnOf\[T\]](https://pkg.go.dev/github.com/Datastore/native/proto#ColumnOf) generic constraint:
 ```go
 type ColumnOf[T any] interface {
 	Column
@@ -330,7 +329,7 @@ type ColumnOf[T any] interface {
 }
 ```
 
-For example, [ColStr](https://pkg.go.dev/github.com/ClickHouse/ch-go/proto#ColStr) (and [ColStr.LowCardinality](https://pkg.go.dev/github.com/ClickHouse/ch-go/proto#ColStr.LowCardinality)) implements `ColumnOf[string]`.
+For example, [ColStr](https://pkg.go.dev/github.com/Datastore/native/proto#ColStr) (and [ColStr.LowCardinality](https://pkg.go.dev/github.com/Datastore/native/proto#ColStr.LowCardinality)) implements `ColumnOf[string]`.
 Same for arrays: `new(proto.ColStr).Array()` implements `ColumnOf[[]string]`, column of `[]string` values.
 
 ### Array
@@ -449,14 +448,14 @@ func TestLocalNativeDump(t *testing.T) {
 
 ## TODO
 - [ ] Types
-  - [ ] [Decimal(P, S)](https://clickhouse.com/docs/en/sql-reference/data-types/decimal/) API
+  - [ ] [Decimal(P, S)](https://docs.hanzo.ai/datastore) API
   - [ ] JSON
   - [ ] SimpleAggregateFunction
   - [ ] AggregateFunction
   - [x] Nothing
   - [x] Interval
   - [ ] Nested
-  - [ ] [Geo types](https://clickhouse.com/docs/en/sql-reference/data-types/geo/)
+  - [ ] [Geo types](https://docs.hanzo.ai/datastore)
     - [x] Point
     - [ ] Ring
     - [ ] Polygon
@@ -466,9 +465,7 @@ func TestLocalNativeDump(t *testing.T) {
   - [ ] Ensure that reads can't block forever
 
 ## Reference
-* [clickhouse-cpp](https://github.com/ClickHouse/clickhouse-cpp)
-* [clickhouse-go](https://github.com/ClickHouse/clickhouse-go)
-* [python driver](https://github.com/mymarilyn/clickhouse-driver)
+* [datastore-go](https://github.com/Datastore/datastore-go)
 
 ## License
 Apache License 2.0

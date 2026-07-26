@@ -21,7 +21,7 @@ type AwareDecoder interface {
 	DecodeAware(r *Reader, version int) error
 }
 
-// Reader implements ClickHouse protocol decoding from buffered reader.
+// Reader implements Datastore protocol decoding from buffered reader.
 // Not goroutine-safe.
 type Reader struct {
 	raw  *bufio.Reader // raw bytes, e.g. on the wire

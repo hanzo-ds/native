@@ -6,7 +6,7 @@ import (
 
 // IPv6 represents IPv6 address.
 //
-// Same as FixedString(16) internally in ClickHouse.
+// Same as FixedString(16) internally in Datastore.
 type IPv6 [16]byte
 
 func (v IPv6) String() string {

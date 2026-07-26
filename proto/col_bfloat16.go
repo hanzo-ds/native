@@ -1,6 +1,6 @@
 package proto
 
-// ColBFloat16 is ClickHouse's BFloat16 column type.
+// ColBFloat16 is Datastore's BFloat16 column type.
 // BFloat16 (Brain Floating Point) is a 16-bit floating point format
 // with 1 sign bit, 8 exponent bits and 7 mantissa bits.
 // It is represented as []uint16 internally and exposed as float32 in
